@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketAddress;
 
 public class TCPEmpfängerBroadcast {
     private static final String BROADCAST = "192.168.178.255";
@@ -49,21 +51,8 @@ public class TCPEmpfängerBroadcast {
     }
 
 
-    private static void broadcastMessages(String data){
-        try (DatagramSocket socket = new DatagramSocket()) {
-            socket.setBroadcast(true);
-            InetAddress iaddr = InetAddress.getByName(BROADCAST);
-            DatagramPacket packetOut = new DatagramPacket(new byte[BUFSIZE], BUFSIZE);
-            packetOut.setData(data.getBytes());
-            packetOut.setAddress(iaddr);
-            packetOut.setPort(BROADCASTPORT);
-            socket.send(packetOut);
+    private static void broadcastMessages(){
 
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Message konnte nicht gebroadcastet werden");
-        }
     }
     public static void main(String[] args) {
         new TCPEmpfängerBroadcast().start();
