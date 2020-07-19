@@ -35,6 +35,7 @@ public class TCPEmpfängerBroadcast {
             String input;
             while ((input = in.readLine()) != null) {
                     System.out.println("Message von: " + socketAddress + ">>" + input);
+                    broadcastMessages(input);
                 }
 
 
