@@ -11,7 +11,7 @@ public class TCPAdapter {
 
     private static final int BROADCASTPORT = 8888;
     private static final int BUFSIZE = 29;
-    private static String TCPHOST = "localhost";
+    private static String TCPHOST = "192.168.178.97";
     private static int TCPPORT = 9998;
 
     public static void main(final String[] args) {
@@ -36,7 +36,7 @@ public class TCPAdapter {
 
             }
         } catch (IOException e) {
-            System.err.println("Adapter konnte sich nicht mit TCP Empfänger verbinden");
+            System.err.println(e.getMessage());
         }
     }
 
