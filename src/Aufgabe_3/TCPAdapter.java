@@ -9,7 +9,7 @@ import java.net.Socket;
 //Empfängt Broadcast (Netzwerk 1) und sendet Nachricht per TCP (Netzwerk 2)
 public class TCPAdapter {
 
-    private static final int BROADCASTPORT = 8888;
+    private static final int BROADCASTPORT = 8886;
     private static final int BUFSIZE = 29;
     private static String TCPHOST = "192.168.178.97";
     private static int TCPPORT = 9998;
@@ -36,9 +36,10 @@ public class TCPAdapter {
 
             }
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            System.err.println(e);
         }
     }
+
 
 
 

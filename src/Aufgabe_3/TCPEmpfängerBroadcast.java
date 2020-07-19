@@ -8,7 +8,7 @@ import java.net.*;
 
 public class TCPEmpfängerBroadcast {
     private static final String BROADCAST = "192.168.178.255";
-    private static final int BROADCASTPORT = 8888;
+    private static final int BROADCASTPORT = 8887;
     private static final int BUFSIZE = 29;
     private static int TCPPORT = 9998;
 

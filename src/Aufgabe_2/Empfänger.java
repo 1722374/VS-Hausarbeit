@@ -8,7 +8,7 @@ import java.net.SocketTimeoutException;
 import java.util.Date;
 
 public class Empfänger {
-    private static final int PORT = 8888;
+    private static final int PORT = 8886;
     private static final int BUFSIZE = 512;
 
     public static void main(final String[] args) {

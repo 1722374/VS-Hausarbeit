@@ -9,7 +9,7 @@ import java.util.Date;
 public class BroadcastSender {
 
     private static final String BROADCAST = "192.168.178.255"; //Broadcast Adresse. Muss konfiguriert werden
-    private static final int PORT = 8888;
+    private static final int PORT = 8886;
 
 
 
@@ -22,6 +22,7 @@ public class BroadcastSender {
                 InetAddress iaddr = InetAddress.getByName(BROADCAST);
                 DatagramPacket packetOut = new DatagramPacket(zeit.getBytes(), zeit.getBytes().length, iaddr, PORT);
                 socket.send(packetOut);
+                System.out.println("Daten gesendet " + zeit);
                 Thread.sleep(10000);
             }
 
