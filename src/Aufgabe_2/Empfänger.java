@@ -3,12 +3,10 @@ package Aufgabe_2;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketTimeoutException;
-import java.util.Date;
+
 
 public class Empfänger {
-    private static final int PORT = 8886;
+    private static final int PORT = 8884;
     private static final int BUFSIZE = 512;
 
     public static void main(final String[] args) {
@@ -20,10 +18,10 @@ public class Empfänger {
             while (true) {
                 socket.receive(packetIn);
                 System.out.println(
-                        "Received: " + packetIn.getLength() + " bytes: " + new String(packetIn.getData()));
+                        "Received: " + packetIn.getLength() + " bytes: " + new String(packetIn.getData(), 0 , packetIn.getLength()));
             }
         } catch (IOException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 }
