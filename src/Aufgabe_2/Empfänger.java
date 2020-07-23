@@ -6,7 +6,7 @@ import java.net.DatagramSocket;
 
 
 public class Empfänger {
-    private static final int PORT = 8884;
+    private static final int PORT = 8886;
     private static final int BUFSIZE = 512;
 
     public static void main(final String[] args) {
