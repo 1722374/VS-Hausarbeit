@@ -82,7 +82,7 @@ public class Sender { // In diesem Fall wird der Client als Sender definiert
             packetOut.setData(outputData);
             packetOut.setLength(outputData.length);
             socket.send(packetOut);
-            System.out.println("Gesendet :" + new String(outputData) + "Datenlänge: " + outputData.length + " Index "+ i + 1);
+            System.out.println("Gesendet :" + new String(outputData) + " Datenlänge: " + outputData.length + " Index "+ i + 1);
         }
     }
 
@@ -95,7 +95,6 @@ public class Sender { // In diesem Fall wird der Client als Sender definiert
         long checksum = adler32.getValue();
 
         byte [] checksumBytes = new String(checksum+ "").trim().getBytes();
-        System.out.print(checksumBytes.length);
         // Datenarry + Checksumarray
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write( data );
@@ -103,7 +102,7 @@ public class Sender { // In diesem Fall wird der Client als Sender definiert
         byte dataWithCheck[] = outputStream.toByteArray( );
         adler32.reset();
 
-        System.out.println("Checksum: " + checksum);
+        System.out.println(" Checksum: " + checksum);
         return dataWithCheck;
     }
 
