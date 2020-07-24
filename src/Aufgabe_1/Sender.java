@@ -12,9 +12,9 @@ import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.Checksum;
 
-public class Sender {
+public class Sender { // In diesem Fall wird der Client als Sender definiert
 
-    private final String HOST = "localhost";
+    private final String HOST = "192.168.178.25";
     private final int PORT = 4495;
     private final int BUFSIZE = 512;
     private final int TIMEOUT = 2000;
@@ -37,11 +37,11 @@ public class Sender {
             socket.setSoTimeout(TIMEOUT);
             packetIn = new DatagramPacket(new byte[BUFSIZE], BUFSIZE);
             packetOut = new DatagramPacket(new byte[BUFSIZE], BUFSIZE, iaddr, PORT);
-            if (!handshakeReceived) {
+            if (!handshakeReceived) { // / Wenn noch kein Handshake aushewertet wurde -> Handshake auswerten (Anzahl der zu sendenden Daten)
                 handshake();
             }
 
-            sendData(handshakeCounter);
+            sendData(handshakeCounter); // Daten anhand von Handshakecounter senden
 
         } catch (SocketException e) {
             e.printStackTrace();
@@ -62,19 +62,19 @@ public class Sender {
 
     private void handshake () throws IOException {
         //Empfänger (Server) anpingen
-        byte [] ping = new byte[1];
+        byte [] ping = new byte[1]; // Byte ohne Inhalt senden, um Handshake zu initialisieren.
         packetOut.setData(ping);
         packetOut.setLength(ping.length);
         socket.send(packetOut);
 
-        socket.receive(packetIn);
+        socket.receive(packetIn); // Auf Handshakeanzahl warten
         int data = Integer.parseInt(new String (packetIn.getData()).trim());
         this.handshakeCounter = data;
         this.handshakeReceived = true;
         System.out.println("Übertragener Handshake Counter: " + data);
     }
 
-    private void sendData(int handshakeCounter) throws IOException, InterruptedException {
+    private void sendData(int handshakeCounter) throws IOException, InterruptedException { // Daten senden
         for (int i = 0; i< handshakeCounter; i++) {
             byte [] data = randomData();
             Thread.sleep(200);
@@ -82,25 +82,11 @@ public class Sender {
             packetOut.setData(outputData);
             packetOut.setLength(outputData.length);
             socket.send(packetOut);
-            System.out.println("Gesendet :" + new String(outputData) + "Datenlänge: " + outputData.length + " Index "+ i + 1);
+            System.out.println("Gesendet :" + new String(outputData) + " Datenlänge: " + outputData.length + " Index "+ i + 1);
         }
     }
 
-   /* private byte[] addChecksum (byte [] data) {
-        //Daten mit Checksum Wert anreichern
-        ByteArrayInputStream is = new ByteArrayInputStream(data);
-        CheckedInputStream cs = new CheckedInputStream(is, new CRC32());
-        Long checksum=cs.getChecksum().getValue();
 
-        byte[] dataWithCheck= new byte[data.length+1];
-        for(int i=0; i<data.length; i++) {
-            dataWithCheck[i]=data[i];
-        }
-        dataWithCheck[dataWithCheck.length-1]= checksum.byteValue();
-        System.out.println("Checksum: " + checksum);
-        return dataWithCheck;
-    }
-    */
 
     private byte[] addChecksum (byte [] data) throws IOException {
         //Daten mit Checksum Wert anreichern
@@ -109,7 +95,6 @@ public class Sender {
         long checksum = adler32.getValue();
 
         byte [] checksumBytes = new String(checksum+ "").trim().getBytes();
-        System.out.print(checksumBytes.length);
         // Datenarry + Checksumarray
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
         outputStream.write( data );
@@ -117,14 +102,14 @@ public class Sender {
         byte dataWithCheck[] = outputStream.toByteArray( );
         adler32.reset();
 
-        System.out.println("Checksum: " + checksum);
+        System.out.println(" Checksum: " + checksum);
         return dataWithCheck;
     }
 
 
     public static void main(String[] args) {
         Sender client = new Sender();
-        client.start();
+        client.start(); // Client starten
     }
 
 

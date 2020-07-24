@@ -8,7 +8,7 @@ import java.net.SocketTimeoutException;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 
-public class Empfänger {
+public class Empfänger { // In diesem Fall wird der Server als Empfänger definiert.
 
     private final int PORT = 4495;
     private final int BUFSIZE = 512;
@@ -18,7 +18,7 @@ public class Empfänger {
     private DatagramPacket packetIn;
     private DatagramPacket packetOut;
     private boolean handshakeSend= false;
-    int handshakeNumber = 10000; //Anzahl der zu erwartenden Anfragen
+    int handshakeNumber = 10000; //Anzahl der zu erwartenden Anfragen. Diese werden zum Client geschickt.
 
     public Empfänger () {
 
@@ -32,7 +32,7 @@ public class Empfänger {
             packetOut= new DatagramPacket(new byte[BUFSIZE], BUFSIZE);
 
             System.out.println("Server wird getsartet...");
-                receiveData();
+                receiveData(); // Daten empfangen
             }  catch (SocketException ex) {
             ex.printStackTrace();
         }
@@ -44,7 +44,7 @@ public class Empfänger {
 
     private void handshake(int handshakeNumber) {
         try {
-            socket.setSoTimeout(0);
+            socket.setSoTimeout(0); //Warten bis neue Handshakeanfrage hereinkommt
             socket.receive(packetIn);
             packetOut.setData(convertDataInt(handshakeNumber));
             packetOut.setLength(convertDataInt(handshakeNumber).length);
@@ -65,12 +65,12 @@ public class Empfänger {
 
     private void receiveData() throws IOException {
 
-        int handshakeCounter = 0;
-        int corruptPacket = 0;
+        int handshakeCounter = 0; // Anzahl der eingegangenen Pakete
+        int corruptPacket = 0;   // Anzahl der korrupten Pakete
         String receivedPackages = "";
         while (true) {
             try {
-                if (!handshakeSend) {
+                if (!handshakeSend) { //Falls keine Handshake Abfrage aktiv ist --> neu Anfragen
                     handshake(handshakeNumber);
                 }
                 socket.setSoTimeout(TIMEOUT);
@@ -91,11 +91,11 @@ public class Empfänger {
                     }
                 }
 
-               if(compare(checksumFromclient,clientDataWithoutChecksum)) {
+               if(compare(checksumFromclient,clientDataWithoutChecksum)) { //Wenn gesendeter und überprüfter checksum nicht übereinstimmen --> Korrupte Daten hochzählen
                    corruptPacket ++;
                }
 
-                handshakeCounter++;
+                handshakeCounter++; // Paketankunft aufzählen
 
                 if (handshakeNumber == handshakeCounter) {
                     output(handshakeCounter, corruptPacket);
@@ -118,24 +118,14 @@ public class Empfänger {
     }
 
 
-   /* private boolean compare(byte checksumClient, byte[] dataWithoutChecksum) {
-        //Vergleicht CheckSum mit Sender Checksum
-        ByteArrayInputStream byteStream = new ByteArrayInputStream(dataWithoutChecksum);
-        CheckedInputStream checkdStream = new CheckedInputStream(byteStream, new CRC32());
-        Long checksum = checkdStream.getChecksum().getValue();
 
-        if (checksumClient != checksum.byteValue()) {
-            return true;
-        }
-        return false;
-    } */
 
    private boolean compare(byte[] checksumClient, byte[] dataWithoutChecksum) {
        //Vergleicht CheckSum mit Sender Checksum
        Checksum adler32 = new Adler32();
        adler32.update(dataWithoutChecksum,0, dataWithoutChecksum.length);
-       long checksum = adler32.getValue();
-       long checksumClientL = Long.parseLong(new String (checksumClient).trim());
+       long checksum = adler32.getValue(); // Hier überprüfte Checksum Summe
+       long checksumClientL = Long.parseLong(new String (checksumClient).trim()); // Client Checksum umcasten
 
 
        if (checksumClientL != checksum) {
@@ -145,7 +135,7 @@ public class Empfänger {
    }
 
 
-     private void output (int handshakeCounter, int corruptedPackages) {
+     private void output (int handshakeCounter, int corruptedPackages) { // Outputstrings generieren für das Protokoll
 
 
         if (handshakeCounter >0){
@@ -177,7 +167,7 @@ public class Empfänger {
 
  public static void main(String [] args) {
       Empfänger server = new Empfänger();
-      server.start();
+      server.start(); // Server starten.
  }
 
 }

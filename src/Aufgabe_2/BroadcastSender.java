@@ -9,7 +9,7 @@ import java.util.Date;
 public class BroadcastSender {
 
     private static final String BROADCAST = "192.168.178.255";
-    private static final int PORT = 8888;
+    private static final int PORT = 8886;
     private static final int BUFSIZE = 512;
     private static final int TIMEOUT = 2000;
 

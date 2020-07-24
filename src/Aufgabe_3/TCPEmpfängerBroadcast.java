@@ -6,11 +6,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
 
+// EMpfängt per TCP Socket eine Nachricht aus Netzwerk 1 und broadcastet diese in das eigene Netzwerk (Netzwerk 2)
 public class TCPEmpfängerBroadcast {
-    private static final String BROADCAST = "192.168.178.255";
-    private static final int BROADCASTPORT = 8888;
-    private static final int BUFSIZE = 29;
-    private static int TCPPORT = 9998;
+    private static final String BROADCAST = "192.168.178.255"; // Muss auf Broadcast Adresse des zweiten Netzwerkes geändert werden.
+    private static final int BROADCASTPORT = 8884;
+    private static final int BUFSIZE = 15; //Feste länge (n)
+    private static int TCPPORT = 9996;
 
 
     public void start() {
@@ -20,7 +21,7 @@ public class TCPEmpfängerBroadcast {
                 connect(serverSocket);
             }
         } catch (IOException e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -52,12 +53,16 @@ public class TCPEmpfängerBroadcast {
     private static void broadcastMessages(String data){
         try (DatagramSocket socket = new DatagramSocket()) {
             socket.setBroadcast(true);
+
             InetAddress iaddr = InetAddress.getByName(BROADCAST);
             DatagramPacket packetOut = new DatagramPacket(new byte[BUFSIZE], BUFSIZE);
             packetOut.setData(data.getBytes());
+            packetOut.setLength(BUFSIZE);
             packetOut.setAddress(iaddr);
+            System.out.println ( new String(packetOut.getData()));
             packetOut.setPort(BROADCASTPORT);
             socket.send(packetOut);
+            System.out.println("Paket wurde gebroadcastet");
 
 
         } catch (IOException e) {
