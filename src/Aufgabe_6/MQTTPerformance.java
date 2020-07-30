@@ -2,7 +2,6 @@ package Aufgabe_6;
 
 
 import org.eclipse.paho.client.mqttv3.*;
-import org.springframework.core.env.SystemEnvironmentPropertySource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,21 +11,17 @@ import java.time.Instant;
 
 class MQTTPerformance {
 
-
-	public static void lol (MqttClient client) {
-
-	}
-
-
-
+	private static Instant empfangen = null; // muss globale Variable sein, damit sie über innere Klasse gesetzt werden kann
 	public static void main(String[] args) throws MqttException {
 		MqttClient client = null;
 
 		String clientId = MqttClient.generateClientId();
 
-		//String broker = Conf.ECLIPSEBROKER;   //("tcp://mqtt.eclipse.org:1883")
+		//Kommentieren Sie den zu testenden Broker aus.
 
-		String broker = Conf.HIVEEBROKER; // "tcp://broker.hivemq.com:1883";
+		String broker = Conf.ECLIPSEBROKER;   //("tcp://mqtt.eclipse.org:1883")
+
+		//String broker = Conf.HIVEEBROKER; // "tcp://broker.hivemq.com:1883";
 		String topic = Conf.TOPIC; // Topic =  "Performance";
 
 
@@ -38,6 +33,7 @@ class MQTTPerformance {
 			int qos = 2;
 			long[] durations = new long[10]; // Dauer der einzelnen schleifendurchläufe werden in diesem Array gespeichert
 
+			// setCallback mit innerer Klasse
 			client.setCallback(new MqttCallback() {
 
 				@Override
@@ -47,12 +43,15 @@ class MQTTPerformance {
 				@Override
 				public void deliveryComplete(IMqttDeliveryToken arg0) {
 
-						//System.out.println("Nachricht empfangen");
+						System.out.println("Nachricht empfangen");
 				}
 
 				@Override
 				public void messageArrived(String topic, MqttMessage m) throws Exception {
-					//System.out.println("Topic: " + topic + ",  Message: " + m.toString());
+					 // Zeitraum wenn Nachricht empfangen wurde
+					empfangen = Instant.now();
+					System.out.println(empfangen);
+					System.out.println("Topic: " + topic + ",  Message: " + m.toString());
 				}
 			});
 
@@ -63,17 +62,19 @@ class MQTTPerformance {
 
 				Instant begin = Instant.now();
 				sendMessage(client, topic,  message, qos);
-				// Nach dem Senden erhält der Client immer direkt die Nachricht, bevor die finish Zeit gemessen wurde (wurde mit deliveryComplete überprüft).
-				Instant finish = Instant.now();
-				Duration duration = Duration.between(begin,finish);
+				Thread.sleep(800); // warten, damit die Nachricht empfangen werden kann. Dies beeinflusst nicht die gemessene Zeit, da die Methode asynchron aufgerufen wird.
+				System.out.println(empfangen);
+				Duration duration = Duration.between(begin,empfangen);
 				durations[i] = duration.toMillis();
+				empfangen = null; //Abschließend empfangen wieder auf Null setzen
 			}
 			double a = average(durations); // durchschnitt
 			double s = deviation(durations, a); // Standardabweichung
 			System.out.println("Die durchschnittliche Zeitdauer beträgt: " + a + " Millisekunden");
 			System.out.println("Die Standardabweichung beträgt: " + s + " Millisekunden");
 
-		} catch (MqttException e) {
+
+		} catch (MqttException | InterruptedException e) {
 			System.err.println(e.getMessage());
 		} finally {
 			if ( client != null) {
